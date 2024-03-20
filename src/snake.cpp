@@ -20,28 +20,44 @@ void Snake::Update() {
 }
 
 void Snake::UpdateHead() {
+  // Calculate the new head position based on the current direction
+  float new_head_x = head_x;
+  float new_head_y = head_y;
+
   switch (direction) {
     case Direction::kUp:
-      head_y -= speed;
+      new_head_y -= speed;
       break;
 
     case Direction::kDown:
-      head_y += speed;
+      new_head_y += speed;
       break;
 
     case Direction::kLeft:
-      head_x -= speed;
+      new_head_x -= speed;
       break;
 
     case Direction::kRight:
-      head_x += speed;
+      new_head_x += speed;
       break;
+  }
+
+  // Check if the new direction is opposite to the current direction.
+  // If so, ignore the input to prevent premature termination.
+  if (!((direction == Direction::kUp && new_head_y > head_y) ||
+        (direction == Direction::kDown && new_head_y < head_y) ||
+        (direction == Direction::kLeft && new_head_x > head_x) ||
+        (direction == Direction::kRight && new_head_x < head_x))) {
+    // Update the head position if the new direction is valid.
+    head_x = new_head_x;
+    head_y = new_head_y;
   }
 
   // Wrap the Snake around to the beginning if going off of the screen.
   head_x = fmod(head_x + grid_width, grid_width);
   head_y = fmod(head_y + grid_height, grid_height);
 }
+
 
 void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) {
   // Add previous head location to vector
